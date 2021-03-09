@@ -1,14 +1,15 @@
 from fastapi import FastAPI
-import models
+from models import models_repo
 from database import engine, get_db
-from routers import home, user
+from routers import home, user, weather_api
 
 app = FastAPI()
 
-models.Base.metadata.create_all(engine)
+models_repo.Base.metadata.create_all(engine)
 
 app.include_router(home.router)
 app.include_router(user.router)
+app.include_router(weather_api.router)
 
-# if __name__ == '__main__':
-#     loop.run_until_complete(get_db())
+if __name__ == "__main__":
+    uvicorn.run(app)

@@ -9,3 +9,4 @@ python-dotenv
 PyMySQL
 aiomysql
 pytest
+httpx
