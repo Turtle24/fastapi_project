@@ -15,7 +15,6 @@ router = APIRouter(
 )
 
 router.mount("/static", StaticFiles(directory="static"), name="static")
-# router.mount("/static", StaticFiles(directory="static", packages=["bootstrap4"]), name='static')
 
 @router.get("/", response_class=HTMLResponse)
 async def home(request: Request):
