@@ -9,9 +9,10 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     email = Column(String(255))
-    location = Column(String(255))
+    city = Column(String(255))
+    country = Column(String(255))
 
-    weather = relationship("Weather", back_populates="user")
+    # weather = relationship("Weather", back_populates="user")
 
 class Weather(Base):
     __tablename__ = 'weather'
@@ -22,4 +23,4 @@ class Weather(Base):
     tempreture = Column(Integer)
     rain = Column(String(255))
 
-    user = relationship('User', back_populates="weather")
+    # user = relationship('User', back_populates="weather")

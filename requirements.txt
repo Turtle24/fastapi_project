@@ -10,3 +10,5 @@ PyMySQL
 aiomysql
 pytest
 httpx
+aiofiles
+jinja2

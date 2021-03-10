@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-import schemas
-from models.models_repo import User
+from schemas import schemas
 from fastapi import HTTPException, status, Depends
 import json
 import httpx
@@ -8,26 +7,28 @@ import os
 from dotenv import load_dotenv
 from repository import user
 
+
 load_dotenv() 
 API_KEY = os.environ.get("API_KEY")
 
 
-async def get_weather(request: schemas.Weather, db: Session):
+async def get_weather(city: str, country: str, db: Session):
     print("off")
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={request.city},{request.country}&units=metric&appid={API_KEY}"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&units=metric&appid={API_KEY}"
     async with httpx.AsyncClient() as client:
         resp = await client.get(url)
         resp.raise_for_status()
         data = resp.json()
+    
+    weather = data['weather']
+    rain = weather[0]['main']
 
-    return data
-        
-    # weather = data['weather']
-    # category = weather[0]['main']
+    forecast = data['main']
+    tempreture = forecast['temp']
 
-    # forecast = data['main']
-    # temp = forecast['temp']
+    statement = ("INSERT INTO test.weather (city, country, tempreture, rain)" 
+                "VALUES (%s, %s, %s, %s)")
+    new_user = await db.execute(statement, (city, country, tempreture, rain))
 
-    # weather = Weather(tempreture=temp, rain=category)
-
-    # return weather
+    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, rain=rain)
+    return weather
