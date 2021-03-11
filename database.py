@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from settings import USERNAME, DATABASE_PASSWORD
 from fastapi import HTTPException, status
-from check_calls import calltracker
 import asyncio
 import aiomysql
 
@@ -29,5 +28,3 @@ async def get_db():
         await conn.commit()
         conn.close()
         
-if __name__ == "__main__":
-    loop.run_until_complete(get_db(loop))

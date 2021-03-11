@@ -6,7 +6,7 @@ import httpx
 import os 
 from dotenv import load_dotenv
 from repository import user
-
+import datetime
 
 load_dotenv() 
 API_KEY = os.environ.get("API_KEY")
@@ -22,16 +22,23 @@ async def get_weather(city: str, country: str, db: Session):
             raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY,
                             detail=f"Error response, while requesting city :{city}, Country: {country}.")
         data = resp.json()
-    
     weather = data['weather']
     rain = weather[0]['main']
 
     forecast = data['main']
     tempreture = forecast['temp']
-
-    statement = ("INSERT INTO test.weather (city, country, tempreture, rain)" 
-                "VALUES (%s, %s, %s, %s)")
-    new_weather = await db.execute(statement, (city, country, tempreture, rain))
-
-    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, rain=rain)
+    date_time = datetime.datetime.now()
+    statement = ("INSERT INTO test.weather (city, country, tempreture, rain, datetime)" 
+                "VALUES (%s, %s, %s, %s, %s)")
+    new_weather = await db.execute(statement, (city, country, tempreture, rain, date_time))
+    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, rain=rain, datetime=date_time)
     return weather
+
+async def get_all_weather(db: Session):
+    statement = ("SELECT * FROM test.weather")
+    query = await db.execute(statement)
+    results = await db.fetchall()
+    if not results:
+        raise HTTPException(status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+                            detail=f"The database didn't return anything")
+    return results

@@ -17,5 +17,9 @@ get_db = database.get_db
 @router.post("/api/weather", response_model= schemas.Weather)
 async def weather(city: str, country: str, db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
     request = await weather_api.get_weather(city, country, db)
-    print("off")
+    return request
+
+@router.get('/all', status_code=200, response_model=List[schemas.Weather])
+async def get_all_weather(db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
+    request = await weather_api.get_all_weather(db)
     return request

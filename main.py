@@ -11,7 +11,3 @@ app.include_router(authentication.router)
 app.include_router(home.router)
 app.include_router(user.router)
 app.include_router(weather_api.router)
-
-
-# if __name__ == "__main__":
-#     uvicorn.run(app)
