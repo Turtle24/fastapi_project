@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DATETIME
 from database import Base
 from sqlalchemy.orm import relationship
-
+from datetime import datetime
 
 class User(Base):
     __tablename__ = 'users'
@@ -9,6 +9,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255))
     email = Column(String(255))
+    password = Column(String(255))
     city = Column(String(255))
     country = Column(String(255))
 
@@ -22,5 +23,6 @@ class Weather(Base):
     country: Column(String(255))
     tempreture = Column(Integer)
     rain = Column(String(255))
+    time = Column(DATETIME)
 
     # user = relationship('User', back_populates="weather")

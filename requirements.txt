@@ -12,3 +12,5 @@ pytest
 httpx==0.17.0
 aiofiles
 jinja2
+jose
+passlib

@@ -18,5 +18,5 @@ router.mount("/static", StaticFiles(directory="static"), name="static")
 
 @router.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    home = get_home(request)
+    home = await get_home(request)
     return home

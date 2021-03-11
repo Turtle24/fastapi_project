@@ -10,7 +10,7 @@ import fastapi
 
 templates = Jinja2Templates(directory="templates")
 
-def get_home(request: Request):
+async def get_home(request: Request):
     data = {
         "page": "Home page"
     }
