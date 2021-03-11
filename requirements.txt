@@ -9,6 +9,6 @@ python-dotenv
 PyMySQL
 aiomysql
 pytest
-httpx
+httpx==0.17.0
 aiofiles
 jinja2

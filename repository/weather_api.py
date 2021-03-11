@@ -13,11 +13,14 @@ API_KEY = os.environ.get("API_KEY")
 
 
 async def get_weather(city: str, country: str, db: Session):
-    print("off")
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&units=metric&appid={API_KEY}"
     async with httpx.AsyncClient() as client:
-        resp = await client.get(url)
-        resp.raise_for_status()
+        try:
+            resp = await client.get(url)
+            resp.raise_for_status()
+        except httpx.HTTPError as exc:
+            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY,
+                            detail=f"Error response, while requesting city :{city}, Country: {country}.")
         data = resp.json()
     
     weather = data['weather']
@@ -28,7 +31,7 @@ async def get_weather(city: str, country: str, db: Session):
 
     statement = ("INSERT INTO test.weather (city, country, tempreture, rain)" 
                 "VALUES (%s, %s, %s, %s)")
-    new_user = await db.execute(statement, (city, country, tempreture, rain))
+    new_weather = await db.execute(statement, (city, country, tempreture, rain))
 
     weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, rain=rain)
     return weather
