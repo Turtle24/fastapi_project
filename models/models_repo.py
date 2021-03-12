@@ -12,8 +12,9 @@ class User(Base):
     password = Column(String(255))
     city = Column(String(255))
     country = Column(String(255))
+    weather_id = Column(Integer, ForeignKey('weather.id'))
 
-    # weather = relationship("Weather", back_populates="user")
+    weather = relationship("Weather", back_populates="user")
 
 class Weather(Base):
     __tablename__ = 'weather'
@@ -22,7 +23,8 @@ class Weather(Base):
     city: Column(String(255))
     country: Column(String(255))
     tempreture = Column(Integer)
-    rain = Column(String(255))
+    conditions = Column(String(255))
     time = Column(DATETIME)
+    user_id = Column(Integer, ForeignKey('user.id'))
 
-    # user = relationship('User', back_populates="weather")
+    user = relationship('User', back_populates="weather")

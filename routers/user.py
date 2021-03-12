@@ -20,7 +20,7 @@ async def create_user(request: schemas.User, db: Session = Depends(get_db)):
     query = await user.create(request,db)
     return query
 
-@router.get('/{id}', response_model=schemas.User, status_code=status.HTTP_200_OK)
+@router.get('/{id}', response_model=schemas.ShowUser, status_code=status.HTTP_200_OK)
 async def get_user(id:int, db: Session = Depends(get_db)):
     query = await user.show(id, db)
     return query

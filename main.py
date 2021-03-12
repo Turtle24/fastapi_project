@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from models import models_repo
 from database import engine, get_db
 from routers import home, user, weather_api, authentication
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 

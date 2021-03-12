@@ -21,6 +21,7 @@ async def get_db():
                                 db='test', loop=loop, autocommit=False) as conn:
         cursor = await conn.cursor(aiomysql.DictCursor) 
 
+        # loop.run_until_complete(cursor)
         if not cursor:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                             detail=f"Could not connect to the database")

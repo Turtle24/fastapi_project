@@ -7,12 +7,13 @@ import os
 from dotenv import load_dotenv
 from repository import user
 import datetime
+from models import models_repo
 
 load_dotenv() 
 API_KEY = os.environ.get("API_KEY")
 
 
-async def get_weather(city: str, country: str, db: Session):
+async def get_weather(city:str, country:str, db: Session):
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&units=metric&appid={API_KEY}"
     async with httpx.AsyncClient() as client:
         try:
@@ -23,15 +24,15 @@ async def get_weather(city: str, country: str, db: Session):
                             detail=f"Error response, while requesting city :{city}, Country: {country}.")
         data = resp.json()
     weather = data['weather']
-    rain = weather[0]['main']
+    conditions = weather[0]['main']
 
     forecast = data['main']
     tempreture = forecast['temp']
     date_time = datetime.datetime.now()
-    statement = ("INSERT INTO test.weather (city, country, tempreture, rain, datetime)" 
+    statement = ("INSERT INTO test.weather (city, country, tempreture, conditions, datetime)" 
                 "VALUES (%s, %s, %s, %s, %s)")
-    new_weather = await db.execute(statement, (city, country, tempreture, rain, date_time))
-    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, rain=rain, datetime=date_time)
+    new_weather = await db.execute(statement, (city, country, tempreture, conditions, date_time))
+    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, conditions=conditions, datetime=date_time)
     return weather
 
 async def get_all_weather(db: Session):

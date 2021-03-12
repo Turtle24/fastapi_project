@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import datetime
 
 class User(BaseModel):
+    id: int
     name: str
     email: str
     password: str
@@ -17,8 +18,12 @@ class Weather(BaseModel):
     city: str
     country: str
     tempreture: int
-    rain: str
+    conditions: str
     datetime: Optional[datetime.datetime]
+
+class GetUserWeather(BaseModel):
+    city: str
+    country: str
 
 class Login(BaseModel):
     username: str
