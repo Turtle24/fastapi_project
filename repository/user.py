@@ -4,6 +4,7 @@ from models import models_repo
 from fastapi import HTTPException, status
 import json
 from security import hashing
+from repository import weather_api 
 
 async def create(request: schemas.User, db:Session):
     """Creates a new user and inserts their information into the database.
@@ -84,3 +85,16 @@ async def update_user(id: int, request: schemas.User, db: Session):
     await db.execute(statement, data)
     updated = await show(id, db)
     return updated
+
+async def create_weather(id: int, db = Session):
+    query_user = await show(id, db)
+    query_weather = await weather_api.get_weather(query_user['city'], query_user['country'], db, query_user['id'])
+    return query_weather
+
+async def get_weather(id: int, db = Session):
+    query = await db.execute(f"SELECT * FROM weather WHERE user_id = {id};")   
+    results = await db.fetchall()
+    if not results:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with the id {id} can not be found")
+    return results

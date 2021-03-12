@@ -5,7 +5,7 @@ from schemas import schemas
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, status
 from repository import user, weather_api
-from typing import List
+from typing import List, Optional
 from security import oauth2
 from models import models_repo
 
@@ -16,8 +16,8 @@ router = APIRouter(
 
 get_db = database.get_db
 @router.post("/api/weather-{city}-{country}", status_code=200, response_model= schemas.Weather)
-async def weather(city: str, country:str, db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
-    request = await weather_api.get_weather(city, country, db)
+async def weather(city: str, country:str, db: Session = Depends(get_db), user_id: Optional[int] = None, current_user: schemas.User = Depends(oauth2.get_current_user)):
+    request = await weather_api.get_weather(city, country, db, user_id)
     return request
 
 @router.get('/all', status_code=200, response_model=List[schemas.Weather])

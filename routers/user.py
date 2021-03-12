@@ -34,3 +34,13 @@ async def delete_user(id: int, db: Session = Depends(get_db)):
 async def update_user(id: int, request: schemas.User, db: Session = Depends(get_db)):
     update = await user.update_user(id, request, db)
     return update
+
+@router.post('/{id}/weather', response_model=schemas.Weather, status_code=status.HTTP_201_CREATED)
+async def create_user_weather(id: int, db: Session = Depends(get_db)):
+    query = await user.create_weather(id ,db)
+    return query
+
+@router.get('/{id}/get-weather', response_model=List[schemas.Weather], status_code=status.HTTP_200_OK)
+async def get_user_weather(id: int, db: Session = Depends(get_db)):
+    query = await user.get_weather(id, db)
+    return query

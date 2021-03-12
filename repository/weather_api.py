@@ -8,12 +8,13 @@ from dotenv import load_dotenv
 from repository import user
 import datetime
 from models import models_repo
+from typing import Optional
 
 load_dotenv() 
 API_KEY = os.environ.get("API_KEY")
 
 
-async def get_weather(city:str, country:str, db: Session):
+async def get_weather(city:str, country:str, db: Session, user_id:Optional[int] = None):
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city},{country}&units=metric&appid={API_KEY}"
     async with httpx.AsyncClient() as client:
         try:
@@ -23,16 +24,22 @@ async def get_weather(city:str, country:str, db: Session):
             raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY,
                             detail=f"Error response, while requesting city :{city}, Country: {country}.")
         data = resp.json()
+    
     weather = data['weather']
     conditions = weather[0]['main']
-
     forecast = data['main']
     tempreture = forecast['temp']
     date_time = datetime.datetime.now()
-    statement = ("INSERT INTO test.weather (city, country, tempreture, conditions, datetime)" 
-                "VALUES (%s, %s, %s, %s, %s)")
-    new_weather = await db.execute(statement, (city, country, tempreture, conditions, date_time))
-    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, conditions=conditions, datetime=date_time)
+    
+    if user_id is None:
+        statement = ("INSERT INTO test.weather (city, country, tempreture, conditions, datetime)" 
+                    "VALUES (%s, %s, %s, %s, %s)")
+        new_weather = await db.execute(statement, (city, country, tempreture, conditions, date_time))
+    else:
+        statement = ("INSERT INTO test.weather (city, country, tempreture, conditions, datetime, user_id)" 
+                    "VALUES (%s, %s, %s, %s, %s, %s)")
+        new_weather = await db.execute(statement, (city, country, tempreture, conditions, date_time, user_id))
+    weather = schemas.Weather(city=city, country=country ,tempreture=tempreture, conditions=conditions, datetime=date_time, user_id=user_id)
     return weather
 
 async def get_all_weather(db: Session):

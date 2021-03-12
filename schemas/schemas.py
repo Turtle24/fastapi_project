@@ -19,7 +19,8 @@ class Weather(BaseModel):
     country: str
     tempreture: int
     conditions: str
-    datetime: Optional[datetime.datetime]
+    datetime: Optional[datetime.datetime] 
+    user_id: Optional[int] = None
 
 class GetUserWeather(BaseModel):
     city: str
