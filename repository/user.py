@@ -6,7 +6,7 @@ import json
 from security import hashing
 from repository import weather_api 
 
-async def create(request: schemas.User, db:Session):
+async def create(request: schemas.SignUpUser, db:Session):
     """Creates a new user and inserts their information into the database.
 
     Args:
@@ -25,7 +25,7 @@ async def create(request: schemas.User, db:Session):
     if not new_user:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED,
                             detail=f"The user could not be created")
-    user = schemas.User(name=request.name, email=request.email, password=hashing.Hash.bcrypt(request.password),city=request.city, country=request.country)
+    user = schemas.SignUpUser(name=request.name, email=request.email, password=hashing.Hash.bcrypt(request.password),city=request.city, country=request.country)
     return user
     
 async def show(id:int, db:Session):
@@ -69,7 +69,7 @@ async def delete_user(id: int, db: Session):
                             detail=f"User with the id {id} can not be found")
     return check
 
-async def update_user(id: int, request: schemas.User, db: Session):
+async def update_user(id: int, request: schemas.SignUpUser, db: Session):
     """Updates a user's details in the database.
 
     Args:
@@ -87,11 +87,32 @@ async def update_user(id: int, request: schemas.User, db: Session):
     return updated
 
 async def create_weather(id: int, db = Session):
+    """Creates weather entries based on user id's
+
+    Args:
+        id (int): The users id
+        db (Session): The database session. Defaults to Session.
+
+    Returns:
+        Weather Schema: Returns Weather Schema but displays as a dictionary in the Swagger UI.
+    """
     query_user = await show(id, db)
     query_weather = await weather_api.get_weather(query_user['city'], query_user['country'], db, query_user['id'])
     return query_weather
 
 async def get_weather(id: int, db = Session):
+    """Retrieves all the user weather requests.
+
+    Args:
+        id (int): The user's id.
+        db (Session): The database session. Defaults to Session.
+
+    Raises:
+        HTTPException: If the user's id isn't found then the 404 exception is raised.
+
+    Returns:
+        List: Returns a list of all the user's weather requests in the database.
+    """
     query = await db.execute(f"SELECT * FROM weather WHERE user_id = {id};")   
     results = await db.fetchall()
     if not results:

@@ -11,6 +11,20 @@ router = APIRouter(tags=['Authentication'])
 
 @router.post('/login')
 async def login_request(request:OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """The authentication process used to access the third party weather api. The user's email is check to see if they have
+       valid credentials. Then the hashed passwords are compared to grant a token to the user.
+
+    Args:
+        request (OAuth2PasswordRequestForm, optional): Form that hands username and password. Defaults to Depends().
+        db (Session, optional): Database Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: Raises a 404 if the user's username or email in this case isn't found.
+        HTTPException: Raises a 404 if the passwords don't match.
+
+    Returns:
+        Dict: Returns a dictionary with the access token.
+    """
     check = ("SELECT email, password FROM test.users WHERE email=%s")
     check_user = await db.execute(check, (request.username))
     user = await db.fetchall()

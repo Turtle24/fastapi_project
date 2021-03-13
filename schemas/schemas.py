@@ -10,6 +10,13 @@ class User(BaseModel):
     city: str
     country: str
 
+class SignUpUser(BaseModel):
+    name: str
+    email: str
+    password: str
+    city: str
+    country: str
+
 class ShowUser(BaseModel):
     name: str
     email: str

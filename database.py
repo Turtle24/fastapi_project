@@ -15,17 +15,24 @@ SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
 async def get_db():
+    """Database connection used for db: Sessions. Creates a cursor to execute queries, cursors are added to the event pool,
+       yielded to use for execution and then the queries are commited to the database. 
+
+    Raises:
+        HTTPException: If the connection to the database fails then the exception is raised.
+
+    Yields:
+        DictCursor: That allows the connection to be queried.
+    """
     loop = asyncio.get_event_loop()
     async with aiomysql.connect(host='127.0.0.1', port=3306,
                                 user=f'{USERNAME}', password=f'{DATABASE_PASSWORD}',
                                 db='test', loop=loop, autocommit=False) as conn:
         cursor = await conn.cursor(aiomysql.DictCursor) 
-
-        # loop.run_until_complete(cursor)
         if not cursor:
             raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                             detail=f"Could not connect to the database")
         yield cursor
         await conn.commit()
-        conn.close()
+        
         
